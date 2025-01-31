@@ -4,5 +4,5 @@
 
 ### Findings Visualized in Power Bi Dashboard: 
 - Summary Statistics & Key Insights
-- Ratings & Price Trends Analysis,
+- Ratings & Price Trends Analysis
 - Correlations Between Top-rated Products & Discount Percentages of Products
