@@ -25,9 +25,9 @@ pd.set_option('display.width', 1000)
 amazon_products.drop(columns=['Unnamed: 0'], inplace=True)
 
 # Overview of data
-print(amazon_products.shape)
-print(amazon_products.isna().sum())
-print("Before Cleaning\n\n")
+# print(amazon_products.shape)
+# print(amazon_products.isna().sum())
+# print("Before Cleaning\n\n")
 
 # Working with just the products/rows that have ratings and discounted prices.
 amazon_products.dropna(
@@ -63,9 +63,9 @@ amazon_products['actual_price'] = amazon_products['actual_price'] * \
     conversion_rate
 
 # Data worked on
-print(amazon_products.shape)
-print(amazon_products.dtypes)
-print("Data Overview After\n\n")
+# print(amazon_products.shape)
+# print(amazon_products.dtypes)
+# print("Data Overview After\n\n")
 
 # Exploratory Data Analysis
 
@@ -77,7 +77,29 @@ percent_discounted = amazon_products['discount_price'].notna(
 average_discount_percent = (
     (amazon_products['actual_price'] - amazon_products['discount_price']) / amazon_products['actual_price']).dropna().mean()
 
-print(f"Total Products: {total_products}")
-print(f"Average Rating: {avg_rating:.2f}")
-print(f"Percent of Products Discounted: {percent_discounted:.2%}")
-print(f"Average Discount Percent: {average_discount_percent:.2%}")
+# # print(f"Total Products: {total_products}")
+# print(f"Average Rating: {avg_rating:.2f}")
+# print(f"Percent of Products Discounted: {percent_discounted:.2%}")
+# print(f"Average Discount Percent: {average_discount_percent:.2%}")
+
+# Distribution of Ratings
+plt.hist(amazon_products['ratings'], bins=10,
+         color='lightblue', edgecolor='black', linewidth=1.3)
+plt.title('Distribution of Ratings')
+plt.xlabel('Rating')
+plt.ylabel('Product Count')
+# plt.show()
+
+# Price trends
+removed_nan_discount = amazon_products.dropna(subset=['discount_price'])
+
+plt.scatter(removed_nan_discount['actual_price'],
+            removed_nan_discount['discount_price'], color='aquamarine', alpha=0.5)
+plt.plot(removed_nan_discount['actual_price'], removed_nan_discount['actual_price'],
+         color='magenta', linestyle='--', label='Actual Price')
+plt.title('Price Trends', color='blue')
+plt.xlabel('Actual Price', color='lightblue')
+plt.ylabel('Discount Price', color='lightblue')
+plt.legend()
+plt.grid(True)
+plt.show()
