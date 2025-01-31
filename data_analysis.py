@@ -8,6 +8,7 @@ import pandas as pd
 import zipfile
 import matplotlib.pyplot as plt
 import numpy as np
+import json
 
 # Read CSV zip into pandas dataframe
 with zipfile.ZipFile("Amazon-Products.csv.zip") as zipref:
@@ -58,7 +59,8 @@ amazon_products['actual_price'] = pd.to_numeric(
     amazon_products['actual_price'], errors='coerce')
 
 # Drop rows with missing values (NaN rows in price & ratings w/ values 'get' instead of numerics)
-amazon_products.dropna(subset=['ratings', 'actual_price'], inplace=True)
+amazon_products.dropna(
+    subset=['ratings', 'no_of_ratings', 'actual_price'], inplace=True)
 
 # Convert foreign currency (inr) to usd
 conversion_rate = 0.013
@@ -79,7 +81,7 @@ print("Data Overview After\n\n")
 
 # basic metrics
 total_products = amazon_products.shape[0]
-avg_rating = amazon_products['ratings'].mean()
+avg_rating = float(amazon_products['ratings'].mean())
 percent_discounted = amazon_products['discount_price'].notna(
 ).sum() / total_products
 average_discount_percent = (
@@ -162,3 +164,17 @@ plt.xlabel('Ratings', color='blue')
 plt.ylabel('Discount Percentage', color='lightgreen')
 plt.grid(True, alpha=0.3)
 plt.show()
+
+# saving data for power bi dashboard
+metrics = {
+    "total_products": total_products,
+    "avg_discount_percent": average_discount_percent,
+    "percent_discounted": percent_discounted * 100,
+    "avg_rating": avg_rating,
+    "highest_rated_category": highest_rated_main_category,
+    "highest_rated_subcategory": highest_rated_sub_category,
+    "highest_rated_products": highest_rated_products.to_dict('records')
+}
+with open('metrics.json', 'w') as file:
+    json.dump(metrics, file)
+filtered_prices.to_csv('filtered_prices.csv', index=False)
