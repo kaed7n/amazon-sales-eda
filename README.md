@@ -1,2 +1,8 @@
 # amazon-sales-eda
-exploratory data analysis and visualization for amazon products sales data. findings visualized in power bi dashboard. summary statistics &amp; key insights, ratings &amp; price trends analysis, and correlations between top-rated products and discount percentages of products
+
+## Using Python for Exploratory Data Analysis and Visualization for Amazon Products Sales Data.
+
+### Findings Visualized in Power Bi Dashboard: 
+- Summary Statistics & Key Insights
+- Ratings & Price Trends Analysis,
+- Correlations Between Top-rated Products & Discount Percentages of Products
