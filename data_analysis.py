@@ -1,5 +1,7 @@
-# Exploratory Data Analysis & Visualization for Amazon Products Sales Data
-# By Kaedyn Crucickshank / Created 01/31/2025 / Last Modified -
+'''
+Exploratory Data Analysis & Visualization for Amazon Products Sales Data
+By Kaedyn Crucickshank / Created 01/31/2025 / Last Modified -
+'''
 
 # Import libraries
 import pandas as pd
@@ -23,20 +25,21 @@ pd.set_option('display.width', 1000)
 amazon_products.drop(columns=['Unnamed: 0'], inplace=True)
 
 # Overview of data
-print(amazon_products.isna().sum())
 print(amazon_products.shape)
-print("Data Overview Before\n\n")
+print(amazon_products.isna().sum())
+print("Before Cleaning\n\n")
 
 # Working with just the products/rows that have ratings and discounted prices.
 amazon_products.dropna(
-    subset=['ratings', 'discount_price', 'actual_price'], inplace=True)
+    subset=['ratings', 'actual_price'], inplace=True)
 
-# Convert data types , remove $ and , from prices first
+# Remove $ and , from prices
 amazon_products['discount_price'] = amazon_products['discount_price'].str.replace(
     '₹', '').str.replace(',', '').str.strip()
 amazon_products['actual_price'] = amazon_products['actual_price'].str.replace(
     '₹', '').str.replace(',', '').str.strip()
 
+# Convert data types
 amazon_products['name'] = amazon_products['name'].astype('string')
 amazon_products['main_category'] = amazon_products['main_category'].astype(
     'string')
@@ -49,13 +52,13 @@ amazon_products['discount_price'] = pd.to_numeric(
 amazon_products['actual_price'] = pd.to_numeric(
     amazon_products['actual_price'], errors='coerce')
 
-# Drop rows with missing values (only some ratings, with 'get' instead of numerics for values)
-amazon_products.dropna(inplace=True)
+# Drop rows with missing values (NaN rows in discount_price & ratings w/ values 'get' instead of numerics)
+amazon_products.dropna(subset=['actual_price'], inplace=True)
 
 # Convert foreign currency (inr) to usd
 conversion_rate = 0.013
-amazon_products['discount_price'] = amazon_products['discount_price'] * \
-    conversion_rate
+amazon_products['discount_price'] = (
+    amazon_products['discount_price'] * conversion_rate).round(2)
 amazon_products['actual_price'] = amazon_products['actual_price'] * \
     conversion_rate
 
@@ -63,4 +66,18 @@ amazon_products['actual_price'] = amazon_products['actual_price'] * \
 print(amazon_products.shape)
 print(amazon_products.dtypes)
 print("Data Overview After\n\n")
-print(amazon_products.isna().sum())
+
+# Exploratory Data Analysis
+
+# basic metrics
+total_products = amazon_products.shape[0]
+avg_rating = amazon_products['ratings'].mean()
+percent_discounted = amazon_products['discount_price'].notna(
+).sum() / total_products
+average_discount_percent = (
+    (amazon_products['actual_price'] - amazon_products['discount_price']) / amazon_products['actual_price']).dropna().mean()
+
+print(f"Total Products: {total_products}")
+print(f"Average Rating: {avg_rating:.2f}")
+print(f"Percent of Products Discounted: {percent_discounted:.2%}")
+print(f"Average Discount Percent: {average_discount_percent:.2%}")
