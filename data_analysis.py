@@ -83,7 +83,7 @@ print("Data Overview After\n\n")
 total_products = amazon_products.shape[0]
 avg_rating = float(amazon_products['ratings'].mean())
 percent_discounted = round((amazon_products['discount_price'].notna(
-).sum() / total_products) / 100, 2)
+).sum() / total_products), 2)
 average_discount_percent = (
     (amazon_products['actual_price'] - amazon_products['discount_price']) / amazon_products['actual_price']).dropna().mean()
 
@@ -117,7 +117,7 @@ plt.show()
 removed_nan_discount = amazon_products.dropna(subset=['discount_price'])
 price_no_extremes = removed_nan_discount['actual_price'].quantile(0.98)
 filtered_prices = removed_nan_discount[removed_nan_discount['actual_price']
-                                       <= price_no_extremes]
+                                       <= price_no_extremes].copy()
 
 # hexbin plot of actual price, frequency / density of discount price (Fig 2)
 plt.figure(figsize=(10, 6))
@@ -168,14 +168,13 @@ plt.show()
 # saving data for power bi dashboard
 
 # new dataframe with discount percent
-filtered_prices['discount_percent'] = (
+filtered_prices['discount_percent'] = ((
     (filtered_prices['actual_price'] - filtered_prices['discount_price']
-     ) / filtered_prices['actual_price'] * 100
-).round(2)
+     ) / filtered_prices['actual_price']) * 100).round(2)
 # important metrics
 metrics = {
     "total_products": total_products,
-    "avg_discount_percent": average_discount_percent,
+    "avg_discount_percent": average_discount_percent * 100,
     "percent_discounted": percent_discounted * 100,
     "avg_rating": avg_rating,
     "highest_rated_category": highest_rated_main_category,
