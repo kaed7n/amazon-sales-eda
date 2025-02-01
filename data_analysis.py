@@ -82,8 +82,8 @@ print("Data Overview After\n\n")
 # basic metrics
 total_products = amazon_products.shape[0]
 avg_rating = float(amazon_products['ratings'].mean())
-percent_discounted = (amazon_products['discount_price'].notna(
-).sum() / total_products) / 100
+percent_discounted = round((amazon_products['discount_price'].notna(
+).sum() / total_products) / 100, 2)
 average_discount_percent = (
     (amazon_products['actual_price'] - amazon_products['discount_price']) / amazon_products['actual_price']).dropna().mean()
 
@@ -145,8 +145,8 @@ plt.show()
 # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # products w/ highest discount percentages
-amazon_products['discount_percent'] = (
-    (amazon_products['actual_price'] - amazon_products['discount_price']) / amazon_products['actual_price']) * 100
+amazon_products['discount_percent'] = round(((
+    (amazon_products['actual_price'] - amazon_products['discount_price']) / amazon_products['actual_price']) * 100), 2)
 # top 10 from highest discount percentage
 highest_discount_percent = amazon_products.nlargest(10, 'discount_percent')[
     ['name', 'discount_percent', 'actual_price', 'discount_price']]
@@ -166,6 +166,13 @@ plt.grid(True, alpha=0.3)
 plt.show()
 
 # saving data for power bi dashboard
+
+# new dataframe with discount percent
+filtered_prices['discount_percent'] = (
+    (filtered_prices['actual_price'] - filtered_prices['discount_price']
+     ) / filtered_prices['actual_price'] * 100
+).round(2)
+# important metrics
 metrics = {
     "total_products": total_products,
     "avg_discount_percent": average_discount_percent,
@@ -175,6 +182,7 @@ metrics = {
     "highest_rated_subcategory": highest_rated_sub_category,
     "highest_rated_products": highest_rated_products.to_dict('records')
 }
+
 with open('metrics.json', 'w') as file:
     json.dump(metrics, file)
 filtered_prices.to_csv('filtered_prices.csv', index=False)
