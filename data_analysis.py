@@ -82,8 +82,8 @@ print("Data Overview After\n\n")
 # basic metrics
 total_products = amazon_products.shape[0]
 avg_rating = float(amazon_products['ratings'].mean())
-percent_discounted = amazon_products['discount_price'].notna(
-).sum() / total_products
+percent_discounted = (amazon_products['discount_price'].notna(
+).sum() / total_products) / 100
 average_discount_percent = (
     (amazon_products['actual_price'] - amazon_products['discount_price']) / amazon_products['actual_price']).dropna().mean()
 
